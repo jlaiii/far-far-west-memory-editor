@@ -28,6 +28,7 @@ from typing import Callable
 
 import customtkinter as ctk
 import psutil
+import webbrowser
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -548,6 +549,25 @@ class MemoryEditorApp(ctk.CTk):
             self.log_tab, font=ctk.CTkFont(size=10), wrap="word",
         )
         self.log_text.pack(fill="both", expand=True, padx=2, pady=2)
+
+        # -- Footer --
+        footer = ctk.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        footer.pack(fill="x", padx=12, pady=(0, 6))
+
+        ctk.CTkLabel(
+            footer, text="Made by jlaiii",
+            font=ctk.CTkFont(size=10), text_color=("gray55", "gray55"),
+        ).pack(side="left")
+
+        link = ctk.CTkLabel(
+            footer, text="github.com/jlaiii/far-far-west-memory-editor",
+            font=ctk.CTkFont(size=10, underline=True),
+            text_color=("#3B82F6", "#60A5FA"), cursor="hand2",
+        )
+        link.pack(side="right")
+        link.bind("<Button-1>", lambda _e: webbrowser.open(
+            "https://github.com/jlaiii/far-far-west-memory-editor"
+        ))
 
     # -- log ----------------------------------------------------------------
 
