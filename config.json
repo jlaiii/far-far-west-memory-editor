@@ -1,0 +1,29 @@
+{
+  "game": {
+    "process_name": "FarFarWest-Win64-Shipping.exe",
+    "module_name": "FarFarWest-Win64-Shipping.exe",
+    "window_title": "Far Far West"
+  },
+  "pointers": [
+    {
+      "name": "Gold",
+      "base_offset": "0x08E30368",
+      "offsets": ["0x98", "0xD8", "0x0", "0x228", "0x3B8", "0x8"],
+      "value_type": "int32",
+      "description": "Gold amount",
+      "min_value": 0,
+      "max_value": 999999999,
+      "presets": [100, 1000, 10000, 50000, 100000, 500000, 999999, 9999999, 999999999]
+    },
+    {
+      "name": "Souls",
+      "base_offset": "0x08E30368",
+      "offsets": ["0x98", "0xD8", "0x0", "0x228", "0x3B8", "0x14"],
+      "value_type": "int32",
+      "description": "Souls amount",
+      "min_value": 0,
+      "max_value": 999999999,
+      "presets": [100, 1000, 10000, 50000, 100000, 500000, 999999, 9999999, 999999999]
+    }
+  ]
+}
