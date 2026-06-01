@@ -149,105 +149,6 @@
             border-color: rgba(255,255,255,0.20);
         }
 
-        /* ── Simulator ──────────────────────────────── */
-        .simulator {
-            max-width: 680px;
-            margin: 0 auto;
-            padding: 32px 24px 48px;
-            animation: fadeUp 1s ease-out 0.45s both;
-        }
-        .sim-card {
-            background: var(--surface);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            padding: 24px 28px;
-        }
-        .sim-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-        }
-        .sim-header h3 {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text2);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-        .sim-status {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .sim-dot {
-            width: 7px; height: 7px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse 2.2s infinite;
-        }
-        .sim-values {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-        .sim-val {
-            background: var(--surface2);
-            border-radius: 10px;
-            padding: 16px 20px;
-        }
-        .sim-val .label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text2);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 6px;
-        }
-        .sim-val .amount {
-            font-size: 28px;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            transition: color 0.3s;
-        }
-        .sim-val.gold .amount { color: var(--gold); }
-        .sim-val.souls .amount { color: var(--blue); }
-        .sim-val .delta {
-            font-size: 11px;
-            font-weight: 600;
-            margin-top: 2px;
-            transition: opacity 0.5s;
-        }
-        .sim-val .delta.up { color: var(--accent); }
-        .sim-val .delta.down { color: #f87171; }
-        .sim-val .delta.neutral { color: var(--text2); }
-        .sim-presets {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 18px;
-        }
-        .sim-presets span {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 5px;
-            font-size: 10px;
-            font-weight: 600;
-            background: var(--surface2);
-            color: var(--text2);
-            transition: all 0.2s;
-            cursor: default;
-        }
-        .sim-presets span:hover {
-            background: var(--accent2);
-            color: #fff;
-        }
-
         /* ── Stats ──────────────────────────────────── */
         .stats {
             display: flex;
@@ -391,10 +292,6 @@
         footer a:hover { text-decoration: underline; }
 
         /* ── Keyframes ──────────────────────────────── */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(1.35); }
-        }
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -406,7 +303,6 @@
             nav .links { display: none; }
             .hero { padding: 60px 16px 16px; }
             .stats { gap: 32px; }
-            .sim-values { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -429,44 +325,18 @@
         <!-- Hero -->
         <section class="hero">
             <h1>Far Far West<br>Memory Editor</h1>
-            <p>A modern, lightweight GUI for editing in-game Gold and Souls. Auto-connects to your game process — no Cheat Engine required.</p>
+            <p>Edit your Gold and Souls in Far Far West with a clean, modern GUI. Auto-connects to your game — just launch and play.</p>
             <div class="cta-group">
                 <a href="https://github.com/jlaiii/far-far-west-memory-editor/archive/refs/heads/main.zip" class="cta-primary">Download ZIP</a>
                 <a href="https://github.com/jlaiii/far-far-west-memory-editor" class="cta-secondary">View on GitHub</a>
             </div>
         </section>
 
-        <!-- Live Simulator -->
-        <div class="simulator">
-            <div class="sim-card">
-                <div class="sim-header">
-                    <h3>Live Preview</h3>
-                    <div class="sim-status"><span class="sim-dot"></span> Connected</div>
-                </div>
-                <div class="sim-values">
-                    <div class="sim-val gold">
-                        <div class="label">Gold</div>
-                        <div class="amount" id="sim-gold">0</div>
-                        <div class="delta neutral" id="sim-gold-delta">--</div>
-                    </div>
-                    <div class="sim-val souls">
-                        <div class="label">Souls</div>
-                        <div class="amount" id="sim-souls">0</div>
-                        <div class="delta neutral" id="sim-souls-delta">--</div>
-                    </div>
-                </div>
-                <div class="sim-presets">
-                    <span>100</span><span>1K</span><span>10K</span><span>50K</span>
-                    <span>100K</span><span>500K</span><span>999K</span><span>9.9M</span><span>999M</span>
-                </div>
-            </div>
-        </div>
-
         <!-- Stats -->
         <div class="stats">
             <div class="stat"><div class="num">2</div><div class="label">Memory Values</div></div>
             <div class="stat"><div class="num">9</div><div class="label">Quick Presets</div></div>
-            <div class="stat"><div class="num"><span class="sim-dot" style="display:inline-block"></span></div><div class="label">Auto-Connect</div></div>
+            <div class="stat"><div class="num">Live</div><div class="label">Auto-Connect</div></div>
             <div class="stat"><div class="num">0 - 999M</div><div class="label">Safe Range</div></div>
         </div>
 
@@ -653,114 +523,6 @@
         }
         animateBg();
 
-        // ── Value Simulator ──────────────────────────
-        (function() {
-            const goldEl = document.getElementById('sim-gold');
-            const goldDeltaEl = document.getElementById('sim-gold-delta');
-            const soulsEl = document.getElementById('sim-souls');
-            const soulsDeltaEl = document.getElementById('sim-souls-delta');
-
-            let gold = 548290;
-            let souls = 12420;
-
-            function format(n) {
-                if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
-                if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
-                if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
-                return n.toLocaleString();
-            }
-
-            function showDelta(el, amount) {
-                if (amount > 1000) {
-                    el.textContent = '+' + format(amount);
-                    el.className = 'delta up';
-                } else if (amount > 0) {
-                    el.textContent = '+' + amount.toLocaleString();
-                    el.className = 'delta up';
-                } else if (amount < -1000) {
-                    el.textContent = format(amount);
-                    el.className = 'delta down';
-                } else if (amount < 0) {
-                    el.textContent = amount.toLocaleString();
-                    el.className = 'delta down';
-                } else {
-                    el.textContent = '—';
-                    el.className = 'delta neutral';
-                }
-                setTimeout(() => {
-                    if (el.textContent !== '—') {
-                        el.textContent = '—';
-                        el.className = 'delta neutral';
-                    }
-                }, 2000);
-            }
-
-            function tick() {
-                const interval = 1200 + Math.random() * 2200;
-
-                // Gold: sometimes big swings, mostly small
-                const goldRoll = Math.random();
-                let goldDelta;
-                if (goldRoll < 0.12) {
-                    goldDelta = Math.floor(Math.random() * 150000) + 50000;   // big earn
-                } else if (goldRoll < 0.20) {
-                    goldDelta = -(Math.floor(Math.random() * 80000) + 10000); // big spend
-                } else if (goldRoll < 0.55) {
-                    goldDelta = Math.floor(Math.random() * 8000) + 500;       // small earn
-                } else if (goldRoll < 0.65) {
-                    goldDelta = -(Math.floor(Math.random() * 4000) + 200);    // small spend
-                } else {
-                    goldDelta = 0;
-                }
-
-                gold += goldDelta;
-                if (gold < 0) gold = 0;
-                if (gold > 999999999) gold = 999999999;
-
-                // Souls: slower changes
-                const soulsRoll = Math.random();
-                let soulsDelta;
-                if (soulsRoll < 0.08) {
-                    soulsDelta = Math.floor(Math.random() * 8000) + 1000;
-                } else if (soulsRoll < 0.14) {
-                    soulsDelta = -(Math.floor(Math.random() * 3000) + 500);
-                } else if (soulsRoll < 0.35) {
-                    soulsDelta = Math.floor(Math.random() * 400) + 50;
-                } else {
-                    soulsDelta = 0;
-                }
-
-                souls += soulsDelta;
-                if (souls < 0) souls = 0;
-                if (souls > 999999999) souls = 999999999;
-
-                goldEl.textContent = gold.toLocaleString();
-                soulsEl.textContent = souls.toLocaleString();
-                showDelta(goldDeltaEl, goldDelta);
-                showDelta(soulsDeltaEl, soulsDelta);
-
-                // Occasionally apply a "preset" jump
-                if (Math.random() < 0.04) {
-                    const presets = [1000, 50000, 100000, 500000, 999999, 9999999, 999999999];
-                    const pick = presets[Math.floor(Math.random() * presets.length)];
-                    const target = Math.random() < 0.5 ? goldEl : soulsEl;
-                    const targetDelta = Math.random() < 0.5 ? goldDeltaEl : soulsDeltaEl;
-                    setTimeout(() => {
-                        const prev = parseInt(target.textContent.replace(/,/g, '')) || 0;
-                        const jump = pick - prev;
-                        target.textContent = pick.toLocaleString();
-                        if (target === goldEl) gold = pick; else souls = pick;
-                        showDelta(targetDelta, jump);
-                    }, 600 + Math.random() * 800);
-                }
-
-                setTimeout(tick, interval);
-            }
-
-            goldEl.textContent = gold.toLocaleString();
-            soulsEl.textContent = souls.toLocaleString();
-            setTimeout(tick, 1500);
-        })();
     </script>
 </body>
 </html>
