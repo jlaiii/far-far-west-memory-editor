@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Far Far West - Memory Editor</title>
+    <title>Far Far West Memory Editor</title>
     <meta name="description" content="A modern GUI memory editor for Far Far West. Edit Gold, Souls, and more with live value display, one-click presets, and freeze functionality.">
     <meta property="og:title" content="Far Far West Memory Editor">
     <meta property="og:description" content="Modern GUI tool for editing in-game memory values. Auto-connect, presets, freeze, and more.">
@@ -19,20 +19,19 @@
             --accent: #4ade80;
             --accent2: #2b7a4b;
             --gold: #f6e05e;
-            --red: #e53e3e;
+            --blue: #60a5fa;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text);
             overflow-x: hidden;
             line-height: 1.6;
         }
 
-        /* ── Animated Background ────────────────────── */
         #bg-canvas {
             position: fixed;
             top: 0; left: 0;
@@ -41,7 +40,6 @@
             pointer-events: none;
         }
 
-        /* ── Content Wrapper ────────────────────────── */
         .content {
             position: relative;
             z-index: 1;
@@ -52,61 +50,64 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 32px;
+            padding: 14px 32px;
             background: rgba(10,10,15,0.85);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255,255,255,0.06);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
             position: sticky;
             top: 0;
             z-index: 100;
         }
         nav .logo {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--accent), #60a5fa);
+            background: linear-gradient(135deg, var(--accent), var(--blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            letter-spacing: -0.3px;
         }
-        nav .links { display: flex; gap: 24px; }
+        nav .links { display: flex; gap: 28px; }
         nav .links a {
             color: var(--text2);
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 500;
             transition: color 0.2s;
         }
-        nav .links a:hover { color: var(--accent); }
+        nav .links a:hover { color: #fff; }
         nav .btn-dl {
-            background: var(--accent2);
-            color: #fff;
-            padding: 8px 18px;
-            border-radius: 8px;
+            background: var(--accent);
+            color: #000;
+            padding: 7px 18px;
+            border-radius: 7px;
             text-decoration: none;
             font-size: 13px;
             font-weight: 600;
             transition: all 0.2s;
         }
-        nav .btn-dl:hover { background: var(--accent); color: #000; }
+        nav .btn-dl:hover { background: #fff; }
 
         /* ── Hero ───────────────────────────────────── */
         .hero {
             text-align: center;
-            padding: 100px 24px 60px;
+            padding: 100px 24px 20px;
         }
         .hero h1 {
-            font-size: clamp(36px, 6vw, 64px);
+            font-size: clamp(36px, 6vw, 60px);
             font-weight: 800;
-            background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, #60a5fa 100%);
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--blue) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 16px;
+            letter-spacing: -1px;
             animation: fadeUp 1s ease-out;
         }
         .hero p {
-            font-size: clamp(16px, 2.5vw, 20px);
+            font-size: clamp(15px, 2.5vw, 18px);
             color: var(--text2);
-            max-width: 600px;
+            max-width: 560px;
             margin: 0 auto 32px;
             animation: fadeUp 1s ease-out 0.15s both;
         }
@@ -120,66 +121,165 @@
         .hero .cta-primary {
             background: var(--accent);
             color: #000;
-            padding: 14px 32px;
-            border-radius: 12px;
-            font-size: 16px;
+            padding: 13px 30px;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 700;
             text-decoration: none;
-            transition: all 0.3s;
-            box-shadow: 0 0 40px rgba(74,222,128,0.25);
+            transition: all 0.25s;
+            box-shadow: 0 0 36px rgba(74,222,128,0.22);
         }
         .hero .cta-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 60px rgba(74,222,128,0.4);
+            box-shadow: 0 0 56px rgba(74,222,128,0.38);
         }
         .hero .cta-secondary {
-            background: rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.05);
             color: var(--text);
-            padding: 14px 32px;
-            border-radius: 12px;
-            font-size: 16px;
+            padding: 13px 30px;
+            border-radius: 10px;
+            font-size: 15px;
             font-weight: 600;
             text-decoration: none;
-            border: 1px solid rgba(255,255,255,0.12);
-            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.10);
+            transition: all 0.25s;
         }
         .hero .cta-secondary:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.20);
+        }
+
+        /* ── Simulator ──────────────────────────────── */
+        .simulator {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 32px 24px 48px;
+            animation: fadeUp 1s ease-out 0.45s both;
+        }
+        .sim-card {
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 24px 28px;
+        }
+        .sim-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .sim-header h3 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .sim-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .sim-dot {
+            width: 7px; height: 7px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2.2s infinite;
+        }
+        .sim-values {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .sim-val {
+            background: var(--surface2);
+            border-radius: 10px;
+            padding: 16px 20px;
+        }
+        .sim-val .label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+        }
+        .sim-val .amount {
+            font-size: 28px;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            transition: color 0.3s;
+        }
+        .sim-val.gold .amount { color: var(--gold); }
+        .sim-val.souls .amount { color: var(--blue); }
+        .sim-val .delta {
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 2px;
+            transition: opacity 0.5s;
+        }
+        .sim-val .delta.up { color: var(--accent); }
+        .sim-val .delta.down { color: #f87171; }
+        .sim-val .delta.neutral { color: var(--text2); }
+        .sim-presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 18px;
+        }
+        .sim-presets span {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--surface2);
+            color: var(--text2);
+            transition: all 0.2s;
+            cursor: default;
+        }
+        .sim-presets span:hover {
+            background: var(--accent2);
+            color: #fff;
         }
 
         /* ── Stats ──────────────────────────────────── */
         .stats {
             display: flex;
             justify-content: center;
-            gap: 48px;
+            gap: 60px;
             flex-wrap: wrap;
-            padding: 40px 24px;
+            padding: 20px 24px;
             animation: fadeUp 1s ease-out 0.4s both;
         }
-        .stats .stat {
-            text-align: center;
-        }
+        .stats .stat { text-align: center; }
         .stats .stat .num {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), #60a5fa);
+            background: linear-gradient(135deg, var(--accent), var(--blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         .stats .stat .label {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text2);
-            margin-top: 4px;
+            margin-top: 3px;
+            font-weight: 500;
         }
 
         /* ── Features ───────────────────────────────── */
         .section-title {
             text-align: center;
-            font-size: clamp(24px, 4vw, 36px);
+            font-size: clamp(22px, 4vw, 32px);
             font-weight: 700;
-            margin-bottom: 48px;
+            margin-bottom: 44px;
+            letter-spacing: -0.5px;
         }
         .features {
             max-width: 1000px;
@@ -187,63 +287,74 @@
             padding: 60px 24px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 16px;
         }
         .feature-card {
             background: var(--surface);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 28px;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 26px;
             transition: all 0.3s;
             animation: fadeUp 0.6s ease-out both;
         }
         .feature-card:hover {
-            border-color: rgba(74,222,128,0.3);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+            border-color: rgba(74,222,128,0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 32px rgba(0,0,0,0.35);
         }
-        .feature-card .icon {
-            font-size: 32px;
-            margin-bottom: 12px;
+        .feature-card .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+            background: rgba(74,222,128,0.12);
+            color: var(--accent);
         }
         .feature-card h3 {
-            font-size: 18px;
-            margin-bottom: 8px;
+            font-size: 17px;
+            margin-bottom: 6px;
+            font-weight: 700;
         }
         .feature-card p {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text2);
+            line-height: 1.55;
         }
 
         /* ── How It Works ───────────────────────────── */
         .how {
-            max-width: 800px;
+            max-width: 760px;
             margin: 0 auto;
             padding: 60px 24px;
         }
         .step {
             display: flex;
-            gap: 20px;
+            gap: 18px;
             align-items: flex-start;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
             animation: fadeUp 0.6s ease-out both;
         }
         .step .step-num {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+            width: 40px; height: 40px;
+            border-radius: 10px;
             background: var(--surface2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             flex-shrink: 0;
+            color: var(--text2);
         }
         .step .step-info h4 {
-            font-size: 16px;
-            margin-bottom: 4px;
+            font-size: 15px;
+            margin-bottom: 3px;
+            font-weight: 700;
         }
         .step .step-info p {
             font-size: 13px;
@@ -254,70 +365,59 @@
         .cta-bottom {
             text-align: center;
             padding: 80px 24px;
-            background: radial-gradient(ellipse at center, rgba(74,222,128,0.08) 0%, transparent 70%);
+            background: radial-gradient(ellipse at center, rgba(74,222,128,0.06) 0%, transparent 70%);
         }
         .cta-bottom h2 {
-            font-size: clamp(24px, 4vw, 36px);
+            font-size: clamp(22px, 4vw, 32px);
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
         }
         .cta-bottom p {
             color: var(--text2);
-            margin-bottom: 28px;
+            margin-bottom: 26px;
+            font-size: 15px;
         }
 
         /* ── Footer ─────────────────────────────────── */
         footer {
             text-align: center;
-            padding: 32px 24px;
-            border-top: 1px solid rgba(255,255,255,0.04);
-            font-size: 13px;
+            padding: 28px 24px;
+            border-top: 1px solid rgba(255,255,255,0.03);
+            font-size: 12px;
             color: var(--text2);
         }
-        footer a {
-            color: var(--accent);
-            text-decoration: none;
-        }
+        footer a { color: var(--accent); text-decoration: none; }
         footer a:hover { text-decoration: underline; }
 
-        /* ── Pulse dot ───────────────────────────────── */
+        /* ── Keyframes ──────────────────────────────── */
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.3); }
+            50% { opacity: 0.4; transform: scale(1.35); }
         }
-        .pulse {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        /* ── Fade Up animation ──────────────────────── */
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(24px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* ── Responsive ─────────────────────────────── */
-        @media (max-width: 600px) {
+        @media (max-width: 640px) {
             nav { padding: 12px 16px; }
             nav .links { display: none; }
-            .hero { padding: 60px 16px 40px; }
-            .stats { gap: 28px; }
+            .hero { padding: 60px 16px 16px; }
+            .stats { gap: 32px; }
+            .sim-values { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Animated Background -->
     <canvas id="bg-canvas"></canvas>
 
     <div class="content">
         <!-- Navigation -->
         <nav>
-            <div class="logo">🎮 FFW Memory Editor</div>
+            <div class="logo">FFW Memory Editor</div>
             <div class="links">
                 <a href="#features">Features</a>
                 <a href="#how">How It Works</a>
@@ -329,88 +429,114 @@
         <!-- Hero -->
         <section class="hero">
             <h1>Far Far West<br>Memory Editor</h1>
-            <p>Edit Gold, Souls, and more with a beautiful GUI. Auto-connects to your game — no setup, no hassle.</p>
+            <p>A modern, lightweight GUI for editing in-game Gold and Souls. Auto-connects to your game process — no Cheat Engine required.</p>
             <div class="cta-group">
-                <a href="https://github.com/jlaiii/far-far-west-memory-editor/releases/latest" class="cta-primary">⬇ Download Latest</a>
-                <a href="https://github.com/jlaiii/far-far-west-memory-editor" class="cta-secondary">📂 View on GitHub</a>
+                <a href="https://github.com/jlaiii/far-far-west-memory-editor/releases/latest" class="cta-primary">Download Latest</a>
+                <a href="https://github.com/jlaiii/far-far-west-memory-editor" class="cta-secondary">View on GitHub</a>
             </div>
         </section>
 
+        <!-- Live Simulator -->
+        <div class="simulator">
+            <div class="sim-card">
+                <div class="sim-header">
+                    <h3>Live Preview</h3>
+                    <div class="sim-status"><span class="sim-dot"></span> Connected</div>
+                </div>
+                <div class="sim-values">
+                    <div class="sim-val gold">
+                        <div class="label">Gold</div>
+                        <div class="amount" id="sim-gold">0</div>
+                        <div class="delta neutral" id="sim-gold-delta">--</div>
+                    </div>
+                    <div class="sim-val souls">
+                        <div class="label">Souls</div>
+                        <div class="amount" id="sim-souls">0</div>
+                        <div class="delta neutral" id="sim-souls-delta">--</div>
+                    </div>
+                </div>
+                <div class="sim-presets">
+                    <span>100</span><span>1K</span><span>10K</span><span>50K</span>
+                    <span>100K</span><span>500K</span><span>999K</span><span>9.9M</span><span>999M</span>
+                </div>
+            </div>
+        </div>
+
         <!-- Stats -->
         <div class="stats">
-            <div class="stat"><div class="num">2+</div><div class="label">Memory Values</div></div>
+            <div class="stat"><div class="num">2</div><div class="label">Memory Values</div></div>
             <div class="stat"><div class="num">9</div><div class="label">Quick Presets</div></div>
-            <div class="stat"><div class="num"><span class="pulse"></span></div><div class="label">Auto-Connect</div></div>
-            <div class="stat"><div class="num">0-999M</div><div class="label">Safe Range</div></div>
+            <div class="stat"><div class="num"><span class="sim-dot" style="display:inline-block"></span></div><div class="label">Auto-Connect</div></div>
+            <div class="stat"><div class="num">0 - 999M</div><div class="label">Safe Range</div></div>
         </div>
 
         <!-- Features -->
         <section id="features">
-            <h2 class="section-title">✨ Everything You Need</h2>
+            <h2 class="section-title">Features</h2>
             <div class="features">
                 <div class="feature-card" style="animation-delay: 0.1s">
-                    <div class="icon">🟢</div>
+                    <div class="tag">Auto</div>
                     <h3>Auto-Connect</h3>
-                    <p>Launches before or after the game — detects it automatically within seconds. No manual attaching required.</p>
+                    <p>Detects the game process automatically within seconds. Launch before or after the game — no manual setup needed.</p>
                 </div>
                 <div class="feature-card" style="animation-delay: 0.2s">
-                    <div class="icon">⚡</div>
+                    <div class="tag">Speed</div>
                     <h3>One-Click Presets</h3>
-                    <p>Set Gold or Souls to common amounts instantly. 100, 1K, 10K, 100K, 500K, 999K, 9.9M, 999M — one click away.</p>
+                    <p>Set values to common amounts instantly. From 100 to 999 million at the tap of a button.</p>
                 </div>
                 <div class="feature-card" style="animation-delay: 0.3s">
-                    <div class="icon">🔒</div>
+                    <div class="tag">Lock</div>
                     <h3>Freeze Values</h3>
-                    <p>Lock any value so the game can't change it. Spend all you want — the value stays frozen.</p>
+                    <p>Lock Gold or Souls so the game cannot decrement them. Spend freely while your balance stays fixed.</p>
                 </div>
                 <div class="feature-card" style="animation-delay: 0.4s">
-                    <div class="icon">🛡️</div>
+                    <div class="tag">Safe</div>
                     <h3>Safety Limits</h3>
-                    <p>Values clamped to 0–999,999,999. No negative balances, no game-crashing overflows.</p>
+                    <p>All values clamped to 0 - 999,999,999. Prevents negative balances and overflow crashes.</p>
                 </div>
                 <div class="feature-card" style="animation-delay: 0.5s">
-                    <div class="icon">🎨</div>
+                    <div class="tag">Design</div>
                     <h3>Clean Dark UI</h3>
-                    <p>Modern dark theme with smooth animations. No console windows, no clutter — just what you need.</p>
+                    <p>Professional dark theme with zero clutter. No console windows, no terminal output — just the interface.</p>
                 </div>
                 <div class="feature-card" style="animation-delay: 0.6s">
-                    <div class="icon">📋</div>
+                    <div class="tag">Debug</div>
                     <h3>Built-in Logging</h3>
-                    <p>Toggle to the Log tab anytime to see memory reads, writes, and pointer chain diagnostics.</p>
+                    <p>Switch to the Log tab for full pointer chain diagnostics, memory read/write history, and error tracing.</p>
                 </div>
             </div>
         </section>
 
         <!-- How It Works -->
         <section id="how">
-            <h2 class="section-title">🚀 How It Works</h2>
+            <h2 class="section-title">How It Works</h2>
             <div class="how">
                 <div class="step" style="animation-delay: 0.1s">
                     <div class="step-num">1</div>
                     <div class="step-info">
                         <h4>Launch the Editor</h4>
-                        <p>Double-click run.vbs — no console, no install. The editor opens and waits for the game.</p>
+                        <p>Download and extract. Double-click <code>run.vbs</code> — no console, no install. The editor opens and waits for the game process.</p>
                     </div>
                 </div>
                 <div class="step" style="animation-delay: 0.2s">
                     <div class="step-num">2</div>
                     <div class="step-info">
                         <h4>Start Far Far West</h4>
-                        <p>The editor auto-detects the game process and connects. You'll see 🟢 Connected within seconds.</p>
+                        <p>The editor auto-detects the game executable and attaches. The status indicator switches to Connected within seconds.</p>
                     </div>
                 </div>
                 <div class="step" style="animation-delay: 0.3s">
                     <div class="step-num">3</div>
                     <div class="step-info">
                         <h4>Edit Your Values</h4>
-                        <p>Type an amount and click Set, or tap a preset. Gold and Souls update in real-time.</p>
+                        <p>Type an amount and press Set, or tap any preset button. Gold and Souls update in real-time via direct memory access.</p>
                     </div>
                 </div>
                 <div class="step" style="animation-delay: 0.4s">
                     <div class="step-num">4</div>
                     <div class="step-info">
-                        <h4>Freeze &amp; Play</h4>
-                        <p>Click ❄ to freeze a value. Spend freely — the editor keeps it locked at your chosen amount.</p>
+                        <h4>Freeze and Play</h4>
+                        <p>Click the freeze button to lock a value. The editor rewrites it every 50ms — the game cannot touch it while it is frozen.</p>
                     </div>
                 </div>
             </div>
@@ -418,19 +544,19 @@
 
         <!-- CTA Bottom -->
         <section class="cta-bottom">
-            <h2>Ready to Get Started?</h2>
-            <p>Download the latest release and run it — no Cheat Engine needed.</p>
-            <a href="https://github.com/jlaiii/far-far-west-memory-editor/releases/latest" class="cta-primary">⬇ Download Now</a>
+            <h2>Ready to Get Started</h2>
+            <p>Download the latest release and run it. No Cheat Engine or technical knowledge required.</p>
+            <a href="https://github.com/jlaiii/far-far-west-memory-editor/releases/latest" class="cta-primary">Download Now</a>
         </section>
 
         <!-- Footer -->
         <footer>
-            <p>Built with ❤️ using Python, customtkinter &amp; pymem —
-               <a href="https://github.com/jlaiii/far-far-west-memory-editor">GitHub</a> ·
+            <p>Built with Python, customtkinter, and pymem &mdash;
+               <a href="https://github.com/jlaiii/far-far-west-memory-editor">GitHub</a> &middot;
                <a href="https://github.com/jlaiii/far-far-west-memory-editor/blob/main/LICENSE">MIT License</a>
             </p>
-            <p style="margin-top: 8px; font-size: 12px;">
-                ⚠️ For educational purposes only. Modifying game memory may violate the game's Terms of Service.
+            <p style="margin-top: 8px; font-size: 11px; color: rgba(255,255,255,0.25);">
+                For educational purposes only. Modifying game memory may violate the game's Terms of Service.
             </p>
         </footer>
     </div>
@@ -449,44 +575,34 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // Track mouse
-        document.addEventListener('mousemove', e => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-        document.addEventListener('mouseleave', () => {
-            mouse.x = -999;
-            mouse.y = -999;
-        });
+        document.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+        document.addEventListener('mouseleave', () => { mouse.x = -999; mouse.y = -999; });
 
         class Particle {
             constructor() {
                 this.reset();
-                this.y = Math.random() * canvas.height; // start anywhere
+                this.y = Math.random() * canvas.height;
             }
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = -10;
-                this.size = Math.random() * 2.5 + 0.5;
-                this.speedY = Math.random() * 0.4 + 0.15;
-                this.speedX = (Math.random() - 0.5) * 0.3;
-                this.opacity = Math.random() * 0.5 + 0.15;
-                this.hue = Math.random() < 0.7 ? 140 + Math.random() * 20 : 200 + Math.random() * 20;
+                this.size = Math.random() * 2.2 + 0.5;
+                this.speedY = Math.random() * 0.35 + 0.12;
+                this.speedX = (Math.random() - 0.5) * 0.25;
+                this.opacity = Math.random() * 0.45 + 0.12;
+                this.hue = Math.random() < 0.65 ? 140 + Math.random() * 20 : 210 + Math.random() * 20;
             }
             update() {
                 this.y += this.speedY;
                 this.x += this.speedX;
-
-                // Slight attraction to mouse
                 const dx = mouse.x - this.x;
                 const dy = mouse.y - this.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 180) {
-                    const force = (180 - dist) / 180 * 0.3;
+                if (dist < 160) {
+                    const force = (160 - dist) / 160 * 0.25;
                     this.x += dx / dist * force;
                     this.y += dy / dist * force;
                 }
-
                 if (this.y > canvas.height + 10) this.reset();
                 if (this.x < -10) this.x = canvas.width + 10;
                 if (this.x > canvas.width + 10) this.x = -10;
@@ -494,55 +610,157 @@
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(${this.hue}, 70%, 65%, ${this.opacity})`;
+                ctx.fillStyle = `hsla(${this.hue}, 70%, 62%, ${this.opacity})`;
                 ctx.fill();
             }
         }
 
-        // Initialize
-        const PARTICLE_COUNT = 80;
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-            particles.push(new Particle());
-        }
+        const PARTICLE_COUNT = 70;
+        for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
 
-        // Draw lines between nearby particles
         function drawLines() {
             for (let i = 0; i < particles.length; i++) {
                 for (let j = i + 1; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
-                    if (dist < 140) {
-                        const alpha = (140 - dist) / 140 * 0.08;
+                    if (dist < 130) {
+                        const alpha = (130 - dist) / 130 * 0.07;
                         ctx.beginPath();
                         ctx.moveTo(particles[i].x, particles[i].y);
                         ctx.lineTo(particles[j].x, particles[j].y);
                         ctx.strokeStyle = `rgba(74, 222, 128, ${alpha})`;
-                        ctx.lineWidth = 0.5;
+                        ctx.lineWidth = 0.4;
                         ctx.stroke();
                     }
                 }
             }
         }
 
-        function animate() {
+        function animateBg() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Subtle radial gradient behind particles
             const grad = ctx.createRadialGradient(
                 canvas.width / 2, canvas.height / 2, 0,
                 canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height) / 1.5
             );
-            grad.addColorStop(0, 'rgba(20, 30, 25, 0.15)');
+            grad.addColorStop(0, 'rgba(20, 30, 25, 0.12)');
             grad.addColorStop(1, 'rgba(10, 10, 15, 0)');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             particles.forEach(p => { p.update(); p.draw(); });
             drawLines();
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animateBg);
         }
-        animate();
+        animateBg();
+
+        // ── Value Simulator ──────────────────────────
+        (function() {
+            const goldEl = document.getElementById('sim-gold');
+            const goldDeltaEl = document.getElementById('sim-gold-delta');
+            const soulsEl = document.getElementById('sim-souls');
+            const soulsDeltaEl = document.getElementById('sim-souls-delta');
+
+            let gold = 548290;
+            let souls = 12420;
+
+            function format(n) {
+                if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+                if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+                if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+                return n.toLocaleString();
+            }
+
+            function showDelta(el, amount) {
+                if (amount > 1000) {
+                    el.textContent = '+' + format(amount);
+                    el.className = 'delta up';
+                } else if (amount > 0) {
+                    el.textContent = '+' + amount.toLocaleString();
+                    el.className = 'delta up';
+                } else if (amount < -1000) {
+                    el.textContent = format(amount);
+                    el.className = 'delta down';
+                } else if (amount < 0) {
+                    el.textContent = amount.toLocaleString();
+                    el.className = 'delta down';
+                } else {
+                    el.textContent = '—';
+                    el.className = 'delta neutral';
+                }
+                setTimeout(() => {
+                    if (el.textContent !== '—') {
+                        el.textContent = '—';
+                        el.className = 'delta neutral';
+                    }
+                }, 2000);
+            }
+
+            function tick() {
+                const interval = 1200 + Math.random() * 2200;
+
+                // Gold: sometimes big swings, mostly small
+                const goldRoll = Math.random();
+                let goldDelta;
+                if (goldRoll < 0.12) {
+                    goldDelta = Math.floor(Math.random() * 150000) + 50000;   // big earn
+                } else if (goldRoll < 0.20) {
+                    goldDelta = -(Math.floor(Math.random() * 80000) + 10000); // big spend
+                } else if (goldRoll < 0.55) {
+                    goldDelta = Math.floor(Math.random() * 8000) + 500;       // small earn
+                } else if (goldRoll < 0.65) {
+                    goldDelta = -(Math.floor(Math.random() * 4000) + 200);    // small spend
+                } else {
+                    goldDelta = 0;
+                }
+
+                gold += goldDelta;
+                if (gold < 0) gold = 0;
+                if (gold > 999999999) gold = 999999999;
+
+                // Souls: slower changes
+                const soulsRoll = Math.random();
+                let soulsDelta;
+                if (soulsRoll < 0.08) {
+                    soulsDelta = Math.floor(Math.random() * 8000) + 1000;
+                } else if (soulsRoll < 0.14) {
+                    soulsDelta = -(Math.floor(Math.random() * 3000) + 500);
+                } else if (soulsRoll < 0.35) {
+                    soulsDelta = Math.floor(Math.random() * 400) + 50;
+                } else {
+                    soulsDelta = 0;
+                }
+
+                souls += soulsDelta;
+                if (souls < 0) souls = 0;
+                if (souls > 999999999) souls = 999999999;
+
+                goldEl.textContent = gold.toLocaleString();
+                soulsEl.textContent = souls.toLocaleString();
+                showDelta(goldDeltaEl, goldDelta);
+                showDelta(soulsDeltaEl, soulsDelta);
+
+                // Occasionally apply a "preset" jump
+                if (Math.random() < 0.04) {
+                    const presets = [1000, 50000, 100000, 500000, 999999, 9999999, 999999999];
+                    const pick = presets[Math.floor(Math.random() * presets.length)];
+                    const target = Math.random() < 0.5 ? goldEl : soulsEl;
+                    const targetDelta = Math.random() < 0.5 ? goldDeltaEl : soulsDeltaEl;
+                    setTimeout(() => {
+                        const prev = parseInt(target.textContent.replace(/,/g, '')) || 0;
+                        const jump = pick - prev;
+                        target.textContent = pick.toLocaleString();
+                        if (target === goldEl) gold = pick; else souls = pick;
+                        showDelta(targetDelta, jump);
+                    }, 600 + Math.random() * 800);
+                }
+
+                setTimeout(tick, interval);
+            }
+
+            goldEl.textContent = gold.toLocaleString();
+            soulsEl.textContent = souls.toLocaleString();
+            setTimeout(tick, 1500);
+        })();
     </script>
 </body>
 </html>
