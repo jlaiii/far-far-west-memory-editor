@@ -128,6 +128,16 @@ class MemoryEngine:
     def is_attached(self) -> bool:
         return self.pm is not None and self.module_base != 0
 
+    def is_process_alive(self) -> bool:
+        """Check that the game process is still actually running."""
+        if self.pm is None:
+            return False
+        try:
+            self.pm.read_bytes(self.module_base, 1)
+            return True
+        except Exception:
+            return False
+
     # -- pointer chain resolution -------------------------------------------
 
     def _read_ptr(self, address: int, pointer_size: int = 8) -> int:
@@ -455,7 +465,7 @@ class MemoryEditorApp(ctk.CTk):
 
         self.config = config
         self.title(f"{config['game'].get('window_title', 'Memory Editor')} - Memory Editor")
-        self.geometry("460x300")
+        self.geometry("460x310")
         self.minsize(380, 220)
 
         self.protocol("WM_DELETE_WINDOW", self._on_close)
@@ -498,6 +508,25 @@ class MemoryEditorApp(ctk.CTk):
             text_color=("gray50", "gray50"),
         )
         self.process_info.pack(side="left", padx=10)
+
+        # -- Author bar (always visible, below status) --
+        author_frame = ctk.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        author_frame.pack(fill="x", padx=16, pady=(4, 0))
+
+        ctk.CTkLabel(
+            author_frame, text="Made by jlaiii",
+            font=ctk.CTkFont(size=10), text_color=("gray50", "gray50"),
+        ).pack(side="left")
+
+        gh_link = ctk.CTkLabel(
+            author_frame, text="github.com/jlaiii/far-far-west-memory-editor",
+            font=ctk.CTkFont(size=10, underline=True),
+            text_color=("#3B82F6", "#60A5FA"), cursor="hand2",
+        )
+        gh_link.pack(side="right")
+        gh_link.bind("<Button-1>", lambda _e: webbrowser.open(
+            "https://github.com/jlaiii/far-far-west-memory-editor"
+        ))
 
         # -- Tab view --
         self.tab_view = ctk.CTkTabview(self)
@@ -550,25 +579,6 @@ class MemoryEditorApp(ctk.CTk):
         )
         self.log_text.pack(fill="both", expand=True, padx=2, pady=2)
 
-        # -- Footer --
-        footer = ctk.CTkFrame(self, corner_radius=0, fg_color="transparent")
-        footer.pack(fill="x", padx=12, pady=(0, 6))
-
-        ctk.CTkLabel(
-            footer, text="Made by jlaiii",
-            font=ctk.CTkFont(size=10), text_color=("gray55", "gray55"),
-        ).pack(side="left")
-
-        link = ctk.CTkLabel(
-            footer, text="github.com/jlaiii/far-far-west-memory-editor",
-            font=ctk.CTkFont(size=10, underline=True),
-            text_color=("#3B82F6", "#60A5FA"), cursor="hand2",
-        )
-        link.pack(side="right")
-        link.bind("<Button-1>", lambda _e: webbrowser.open(
-            "https://github.com/jlaiii/far-far-west-memory-editor"
-        ))
-
     # -- log ----------------------------------------------------------------
 
     def _log_line(self, message: str) -> None:
@@ -589,6 +599,17 @@ class MemoryEditorApp(ctk.CTk):
 
     def _poll_and_auto_attach(self) -> None:
         game_running = self.engine.is_process_running(self.engine.process_name)
+        process_alive = self.engine.is_process_alive() if self.engine.is_attached else False
+
+        # If we thought we were attached but the process died, clean up
+        if self.engine.is_attached and not process_alive:
+            self.engine.detach()
+            for card in self.pointer_cards:
+                card.stop_all()
+            self._show_waiting()
+            self._was_ever_attached = False
+            self._log_line("Game process closed. Waiting for restart...")
+
         attached = self.engine.is_attached
 
         if attached:
@@ -624,11 +645,6 @@ class MemoryEditorApp(ctk.CTk):
                 text_color=("#D69E2E", "#F6E05E"),
             )
             self.process_info.configure(text="Waiting for game to start...")
-
-            if self._was_ever_attached:
-                self._was_ever_attached = False
-                self._show_waiting()
-                self._log_line("Game process closed. Waiting for restart...")
 
     def _animate_waiting_dots(self) -> None:
         if not self.engine.is_attached and self.waiting_frame.winfo_ismapped():
