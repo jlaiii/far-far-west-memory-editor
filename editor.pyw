@@ -532,7 +532,7 @@ class MemoryEditorApp(ctk.CTk):
         )
         author_link.pack(side="left")
         author_link.bind("<Button-1>", lambda _e: webbrowser.open(
-            "https://jlaiii.github.io/far-far-west-memory-editor/"
+            "https://jlaiii.github.io/far-far-west-gold-soul-editor/"
         ))
 
         # -- Tab view --
