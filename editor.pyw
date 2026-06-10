@@ -459,13 +459,10 @@ class PointerCard(ctk.CTkFrame):
 class MemoryEditorApp(ctk.CTk):
 
     SCAN_INTERVAL_MS = 2000
-    ANIM_INTERVAL_MS = 180  # spinner / dot animation speed
+    ANIM_INTERVAL_MS = 150  # smooth ~6.6 fps
 
-    # -- Spinner frames (braille + arrows for different states) ------------
-
-    SPINNER = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
-    PULSE = ["◐", "◓", "◑", "◒"]
-    WEDGE = ["◴", "◷", "◶", "◵"]
+    # ASCII-only spinner — guaranteed monospace, no Unicode glitches
+    SPINNER = ["|", "/", "-", "\\"]
 
     def __init__(self, config: dict) -> None:
         super().__init__()
@@ -488,8 +485,8 @@ class MemoryEditorApp(ctk.CTk):
         self._anim_tick = 0
         self._attach_attempts = 0
         self._refresh_count = 0
-        self._last_state: str = ""
         self._start_time = datetime.now()
+        self._anim_job: str | None = None   # after() job id for clean cancellation
 
         self._build_ui()
         self._log_line("═" * 42)
@@ -507,14 +504,14 @@ class MemoryEditorApp(ctk.CTk):
         top = ctk.CTkFrame(self, corner_radius=6)
         top.pack(fill="x", padx=6, pady=(6, 2))
 
+        # Fixed-width indicator so text changes never shift layout
         self.status_indicator = ctk.CTkLabel(
-            top, text=self.SPINNER[0], font=ctk.CTkFont(size=18),
+            top, text=" ", font=ctk.CTkFont(size=18), width=24, anchor="center",
         )
         self.status_indicator.pack(side="left", padx=(8, 4))
 
         self.status_label = ctk.CTkLabel(
-            top, text="Scanning...", font=ctk.CTkFont(size=13),
-            text_color=("#D69E2E", "#F6E05E"),
+            top, text="Scanning...", font=ctk.CTkFont(size=13), width=90, anchor="w",
         )
         self.status_label.pack(side="left")
 
@@ -549,25 +546,18 @@ class MemoryEditorApp(ctk.CTk):
         # Waiting overlay
         self.waiting_frame = ctk.CTkFrame(self.main_tab, fg_color="transparent")
 
-        self.waiting_spinner = ctk.CTkLabel(
-            self.waiting_frame,
-            text="",
-            font=ctk.CTkFont(size=28),
-            text_color=("#D69E2E", "#F6E05E"),
-        )
-        self.waiting_spinner.pack(pady=(18, 4))
-
-        self.waiting_label = ctk.CTkLabel(
+        # Use a CTkProgressBar for smooth, native animation — no text glitches
+        self.waiting_title = ctk.CTkLabel(
             self.waiting_frame,
             text="Waiting for Far Far West...",
             font=ctk.CTkFont(size=16, weight="bold"),
             text_color=("gray55", "gray65"),
         )
-        self.waiting_label.pack(pady=(2, 4))
+        self.waiting_title.pack(pady=(18, 4))
 
         self.waiting_sub = ctk.CTkLabel(
             self.waiting_frame,
-            text=f"Launch the game — editor will auto-connect.",
+            text="Launch the game — editor will auto-connect.",
             font=ctk.CTkFont(size=13),
             text_color=("gray55", "gray55"),
         )
@@ -579,7 +569,7 @@ class MemoryEditorApp(ctk.CTk):
             font=ctk.CTkFont(size=13),
             text_color=("gray50", "gray60"),
         )
-        self.waiting_status.pack(pady=(8, 4))
+        self.waiting_status.pack(pady=(10, 4))
 
         self.waiting_timer = ctk.CTkLabel(
             self.waiting_frame,
@@ -587,7 +577,19 @@ class MemoryEditorApp(ctk.CTk):
             font=ctk.CTkFont(size=12),
             text_color=("gray50", "gray58"),
         )
-        self.waiting_timer.pack(pady=(2, 10))
+        self.waiting_timer.pack(pady=(2, 4))
+
+        # Smooth indeterminate progress bar instead of jittery text spinner
+        self.waiting_bar = ctk.CTkProgressBar(
+            self.waiting_frame,
+            width=260,
+            height=6,
+            mode="indeterminate",
+            progress_color=("#D69E2E", "#F6E05E"),
+            fg_color=("gray80", "gray25"),
+        )
+        self.waiting_bar.pack(pady=(8, 14))
+        self.waiting_bar.start()
 
         # Card area
         self.card_area = ctk.CTkScrollableFrame(self.main_tab, fg_color="transparent")
@@ -621,7 +623,7 @@ class MemoryEditorApp(ctk.CTk):
     def _start_auto_refresh(self) -> None:
         self._poll_and_auto_attach()
         self._refresh_all_cards()
-        self._animate_ui()
+        self._start_animation()
         self.after(self.SCAN_INTERVAL_MS, self._start_auto_refresh)
 
     def _poll_and_auto_attach(self) -> None:
@@ -638,7 +640,7 @@ class MemoryEditorApp(ctk.CTk):
             self._show_waiting()
             self._was_ever_attached = False
             self._attach_attempts = 0
-            self._log_line("⚠  Game process closed — watching for restart...")
+            self._log_line("WARN  Game process closed — watching for restart...")
 
         attached = self.engine.is_attached
 
@@ -648,12 +650,13 @@ class MemoryEditorApp(ctk.CTk):
                 self._was_ever_attached = True
                 self._show_cards()
                 pid = self.engine.get_process_pid()
-                self._log_line(f"✔  Connected — PID {pid}, base {hex(self.engine.module_base)}")
-                self._log_line(f"   Reading Gold & Souls values live...")
+                self._log_line(f"OK    Connected — PID {pid}, base {hex(self.engine.module_base)}")
+                self._log_line(f"      Reading Gold & Souls values live...")
 
-            # pulse between connected states
-            pulse_text = self.PULSE[self._anim_tick % len(self.PULSE)]
-            self.status_indicator.configure(text=pulse_text)
+            # Static checkmark — no jittery pulse animation
+            self.status_indicator.configure(
+                text="*", text_color=("#2B7A4B", "#4ADE80"),
+            )
             self.status_label.configure(
                 text="Live", text_color=("#2B7A4B", "#4ADE80"),
             )
@@ -663,68 +666,67 @@ class MemoryEditorApp(ctk.CTk):
         # -- Game found, attaching -------------------------------------------
         elif game_running:
             self._attach_attempts += 1
-            spinner = self.SPINNER[self._anim_tick % len(self.SPINNER)]
-            self.status_indicator.configure(text=spinner)
             self.status_label.configure(
-                text="Attaching…", text_color=("#D69E2E", "#F6E05E"),
+                text="Attaching", text_color=("#D69E2E", "#F6E05E"),
             )
             self.process_info.configure(text=self.engine.process_name)
             self._do_attach()
 
         # -- Scanning for game -----------------------------------------------
         else:
-            spinner = self.SPINNER[self._anim_tick % len(self.SPINNER)]
-            self.status_indicator.configure(text=spinner)
             self.status_label.configure(
                 text="Scanning", text_color=("#D69E2E", "#F6E05E"),
             )
-            self.process_info.configure(text=f"Looking for {self.engine.process_name}…")
+            self.process_info.configure(text=f"Looking for {self.engine.process_name}...")
 
-    # -- animation loop (runs ~5× per second) ------------------------------
+    # -- animation (single loop — no competing after() chains) --------------
 
-    def _animate_ui(self) -> None:
+    def _start_animation(self) -> None:
+        """Kick off the animation loop. Safe to call multiple times."""
         self._anim_tick += 1
+        frame = self._anim_tick % len(self.SPINNER)
 
         if self.engine.is_attached:
-            self._animate_connected()
+            # Subtle blinking dot on the indicator to show "alive"
+            dot = "." if (self._anim_tick % 6 < 3) else " "
+            self.status_indicator.configure(
+                text=dot, text_color=("#2B7A4B", "#4ADE80"),
+            )
         elif self.waiting_frame.winfo_ismapped():
-            self._animate_waiting()
+            # ASCII spinner in top bar — always monospace, no glitch
+            self.status_indicator.configure(
+                text=self.SPINNER[frame], text_color=("#D69E2E", "#F6E05E"),
+            )
+            self._update_waiting_status()
 
-        self.after(self.ANIM_INTERVAL_MS, self._animate_ui)
+        # Cancel previous and reschedule — prevents callback buildup
+        if self._anim_job is not None:
+            self.after_cancel(self._anim_job)
+        self._anim_job = self.after(self.ANIM_INTERVAL_MS, self._start_animation)
 
-    def _animate_connected(self) -> None:
-        """Subtle breathing pulse when connected — shows editor is alive."""
-        # Cycle the status indicator through pulse chars
-        pulse = self.PULSE[self._anim_tick % len(self.PULSE)]
-        self.status_indicator.configure(text=pulse)
-
-    def _animate_waiting(self) -> None:
-        """Rich waiting overlay: big spinner + cycling status lines + elapsed timer."""
-        frame = self._anim_tick % len(self.SPINNER)
-        self.waiting_spinner.configure(text=self.SPINNER[frame])
-
-        # Cycle through different status messages
+    def _update_waiting_status(self) -> None:
+        """Cycle waiting detail text — no text-swapping in the spinner itself."""
         elapsed = (datetime.now() - self._start_time).seconds
+
         if elapsed < 10:
-            detail = "Warming up…"
+            detail = "Warming up..."
         elif elapsed < 30:
-            detail = "Still watching for game…"
+            detail = "Still watching for game..."
         elif elapsed < 60:
             detail = "Make sure the game is running"
         elif elapsed < 120:
             detail = "Waiting — editor will connect automatically"
         else:
             mins = elapsed // 60
-            detail = f"Listening… ({mins} min elapsed — game not detected yet)"
+            detail = f"Listening... ({mins} min elapsed — game not detected yet)"
 
         self.waiting_status.configure(text=detail)
 
-        # Elapsed timer
         if elapsed < 60:
-            self.waiting_timer.configure(text=f"⏱ {elapsed}s elapsed")
+            self.waiting_timer.configure(text=f"elapsed: {elapsed}s")
         else:
             m, s = divmod(elapsed, 60)
-            self.waiting_timer.configure(text=f"⏱ {m}m {s}s elapsed")
+            self.waiting_timer.configure(text=f"elapsed: {m}m {s}s")
 
     # -- card refresh -------------------------------------------------------
 
@@ -738,12 +740,14 @@ class MemoryEditorApp(ctk.CTk):
     # -- view switching -----------------------------------------------------
 
     def _show_cards(self) -> None:
+        self.waiting_bar.stop()
         self.waiting_frame.pack_forget()
         self.card_area.pack(fill="both", expand=True, padx=2, pady=2)
 
     def _show_waiting(self) -> None:
         self.card_area.pack_forget()
         self.waiting_frame.pack(fill="x", padx=4, pady=4)
+        self.waiting_bar.start()
 
     # -- attach / detach ----------------------------------------------------
 
@@ -754,7 +758,7 @@ class MemoryEditorApp(ctk.CTk):
         else:
             # Only log on first attempt and every 5th thereafter
             if self._attach_attempts <= 1 or self._attach_attempts % 5 == 0:
-                self._log_line(f"⟳  Attach retry #{self._attach_attempts}…")
+                self._log_line(f"RETRY Attach attempt #{self._attach_attempts}...")
 
     def _do_detach(self) -> None:
         for card in self.pointer_cards:
@@ -765,6 +769,9 @@ class MemoryEditorApp(ctk.CTk):
     # -- shutdown -----------------------------------------------------------
 
     def _on_close(self) -> None:
+        # Clean up animation timer
+        if self._anim_job is not None:
+            self.after_cancel(self._anim_job)
         self._log_line("═" * 42)
         self._log_line("  Closing Gold & Soul Editor — goodbye!")
         self._log_line("═" * 42)
